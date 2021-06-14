@@ -12,7 +12,7 @@ app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
 
-morgan.token('body', (req, res) => {
+morgan.token('body', (req) => {
   if (req.method === 'POST') {
     return JSON.stringify(req.body)
   } else {
@@ -21,24 +21,24 @@ morgan.token('body', (req, res) => {
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('/info', (request, response) => {
+app.get('/info', (_request, response) => {
   Person
     .find({})
     .then(persons => {
       let text = `
-      <p>Phonebook has info for ${persons.length} people<\p>
-      <p>${Date()}<\p>
+      <p>Phonebook has info for ${persons.length} people</p>
+      <p>${Date()}</p>
       `
       response.send(text)
     })
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (_request, response) => {
   Person
-  .find({})
-  .then(persons => {
-    response.json(persons)
-  })
+    .find({})
+    .then(persons => {
+      response.json(persons)
+    })
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -55,7 +55,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -72,7 +72,7 @@ app.post('/api/persons', (request, response, next) => {
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
